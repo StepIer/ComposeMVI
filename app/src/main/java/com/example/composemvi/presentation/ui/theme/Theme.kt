@@ -1,4 +1,4 @@
-package com.example.composemvi.ui.theme
+package com.example.composemvi.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
