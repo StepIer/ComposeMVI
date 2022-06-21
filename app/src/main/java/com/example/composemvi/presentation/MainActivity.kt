@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.composemvi.presentation.main.MainScreen
 import com.example.composemvi.presentation.ui.theme.ComposeMVITheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Greeting("Android")
+                    MainScreen()
                 }
             }
         }

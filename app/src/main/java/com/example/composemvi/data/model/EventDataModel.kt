@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 data class EventDataModel(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Int?,
     @ColumnInfo(name = "event")
     val event: String,
     @ColumnInfo(name = "time")

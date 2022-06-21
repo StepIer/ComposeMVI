@@ -16,7 +16,7 @@ class EventsRepositoryImpl(
     }
 
     override fun deleteEvents() {
-        eventsDao.getAllEvents()
+        eventsDao.deleteAllEvents()
     }
 
     override fun deleteEvent(id: Int) {
