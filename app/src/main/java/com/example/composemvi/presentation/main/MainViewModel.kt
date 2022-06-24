@@ -82,6 +82,22 @@ class MainViewModel @Inject constructor(
                             ).toDomainModel()
                         )
                     }
+                    is Action.EventItemClicked -> {
+                        insertEventUseCase.invoke(
+                            Event(
+                                event = "EventItemClicked on ${action.id} id",
+                                time = LocalDateTime.now()
+                            ).toDomainModel()
+                        )
+                    }
+                    Action.HeaderItemClicked -> {
+                        insertEventUseCase.invoke(
+                            Event(
+                                event = "HeaderItemClicked",
+                                time = LocalDateTime.now()
+                            ).toDomainModel()
+                        )
+                    }
                 }
             }
         }
@@ -91,27 +107,11 @@ class MainViewModel @Inject constructor(
         object ButtonAddEventClicked : Action()
         data class DeleteEventById(val id: Int) : Action()
         object DeleteAllEvents : Action()
+        object HeaderItemClicked : Action()
+        data class EventItemClicked(val id: Int) : Action()
     }
 
     data class State(
         val events: Flow<List<Event>> = flowOf()
     )
 }
-
-//private fun handleAction() {
-//    viewModelScope.launch {
-//        action.consumeAsFlow().collect() { action ->
-//            when (action) {
-//                is Action.ButtonAddEventClicked -> {
-//                    insertEventUseCase.invoke(Event(event = action.event, time = LocalDateTime.now()).toDomainModel())
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//sealed class Action {
-//    data class ButtonAddEventClicked(
-//        val event: String = "ButtonAddEventClicked"
-//    ) : Action()
-//}

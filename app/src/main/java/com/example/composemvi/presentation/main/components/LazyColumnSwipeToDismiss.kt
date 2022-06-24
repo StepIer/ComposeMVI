@@ -6,11 +6,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -20,18 +18,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.composemvi.presentation.model.Event
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LazyColumnSwipeToDismiss(
-    events: List<Event>,
-    onDelete: (id: Int) -> Unit,
-    content: LazyListScope.() -> Unit
+    events: List<Event> = emptyList(),
+    lazyListState: LazyListState = rememberLazyListState(),
+    onDelete: (id: Int) -> Unit = {},
+    onClick: (id: Int) -> Unit = {},
+    content: LazyListScope.() -> Unit = {},
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.heightIn(max = (LocalConfiguration.current.screenHeightDp - (64 + 64 + 80)).dp),
+        state = lazyListState
+    ) {
         items(events, { event: Event -> event.id!! }) { item ->
             val dismissState = rememberDismissState()
 
@@ -89,14 +94,16 @@ fun LazyColumnSwipeToDismiss(
                             .align(alignment = Alignment.CenterVertically)
 //                            .padding(8.dp)
                     ) {
-                        EventTile(event = item) {
-
+                        ListTile(
+                            textId = item.id.toString(),
+                            textEvent = item.event,
+                            textTime = item.time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                        ) {
+                            onClick(item.id!!)
                         }
                     }
                 }
             )
-
-            Divider(Modifier.fillMaxWidth(), Color.DarkGray)
         }
         content()
     }
