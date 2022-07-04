@@ -25,7 +25,7 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun providesEventsDatabase(@ApplicationContext context: Context): EventsDatabase {
+    fun provideEventsDatabase(@ApplicationContext context: Context): EventsDatabase {
         return Room.databaseBuilder(
             context,
             EventsDatabase::class.java,
@@ -41,3 +41,4 @@ object DataModule {
         )
     }
 }
+

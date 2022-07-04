@@ -12,9 +12,9 @@ import com.example.composemvi.presentation.model.toDomainModel
 import com.example.composemvi.presentation.model.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +30,9 @@ class MainViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state
+
+    private val _eventsUi = Channel<EventUi>(capacity = Channel.UNLIMITED)
+    val eventsUi: ReceiveChannel<EventUi> = _eventsUi
 
     init {
         handleAction()
@@ -59,8 +62,7 @@ class MainViewModel @Inject constructor(
                     Action.ButtonAddEventClicked -> {
                         insertEventUseCase.invoke(
                             Event(
-                                event = "ButtonAddEventClicked",
-                                time = LocalDateTime.now()
+                                event = "ButtonAddEventClicked"
                             ).toDomainModel()
                         )
                     }
@@ -68,8 +70,7 @@ class MainViewModel @Inject constructor(
                         deleteEventUseCase.invoke(action.id)
                         insertEventUseCase.invoke(
                             Event(
-                                event = "DeleteEventById by ${action.id} id",
-                                time = LocalDateTime.now()
+                                event = "DeleteEventById by ${action.id} id"
                             ).toDomainModel()
                         )
                     }
@@ -77,30 +78,46 @@ class MainViewModel @Inject constructor(
                         deleteEventsUseCase.invoke()
                         insertEventUseCase.invoke(
                             Event(
-                                event = "DeleteAllEvents",
-                                time = LocalDateTime.now()
+                                event = "DeleteAllEvents"
                             ).toDomainModel()
                         )
                     }
                     is Action.EventItemClicked -> {
                         insertEventUseCase.invoke(
                             Event(
-                                event = "EventItemClicked on ${action.id} id",
-                                time = LocalDateTime.now()
+                                event = "EventItemClicked on event with ${action.event.id} id"
                             ).toDomainModel()
                         )
+                        _eventsUi.trySend(EventUi.NavigateToEventScreen(action.event))
                     }
                     Action.HeaderItemClicked -> {
                         insertEventUseCase.invoke(
                             Event(
-                                event = "HeaderItemClicked",
-                                time = LocalDateTime.now()
+                                event = "HeaderItemClicked"
                             ).toDomainModel()
                         )
+                    }
+                    is Action.IdItemClicked -> {
+                        insertEventUseCase.invoke(
+                            Event(
+                                event = "IdItemClicked on ${action.id} id"
+                            ).toDomainModel()
+                        )
+                        _eventsUi.trySend(EventUi.NavigateToEventIdScreen(action.id))
                     }
                 }
             }
         }
+    }
+
+    sealed class EventUi {
+        data class NavigateToEventScreen(
+            val event: Event
+        ) : EventUi()
+
+        data class NavigateToEventIdScreen(
+            val id: Int
+        ) : EventUi()
     }
 
     sealed class Action {
@@ -108,7 +125,8 @@ class MainViewModel @Inject constructor(
         data class DeleteEventById(val id: Int) : Action()
         object DeleteAllEvents : Action()
         object HeaderItemClicked : Action()
-        data class EventItemClicked(val id: Int) : Action()
+        data class EventItemClicked(val event: Event) : Action()
+        data class IdItemClicked(val id: Int) : Action()
     }
 
     data class State(

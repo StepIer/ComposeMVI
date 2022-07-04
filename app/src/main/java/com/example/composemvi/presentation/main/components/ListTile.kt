@@ -1,5 +1,6 @@
 package com.example.composemvi.presentation.main.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -20,14 +21,14 @@ fun ListTile(
     textId: String,
     textEvent: String,
     textTime: String,
-    onClick: () -> Unit
+    onClickId: () -> Unit = {},
+    onClickEvent: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .padding(all = 4.dp)
             .fillMaxWidth()
             .heightIn(64.dp, 200.dp),
-        onClick = { onClick() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -35,13 +36,17 @@ fun ListTile(
             Text(
                 text = textId,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onClickId() }
             )
             Text(
                 text = textEvent,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.weight(4f)
+                modifier = Modifier
+                    .weight(4f)
+                    .clickable { onClickEvent() }
             )
             Text(
                 text = textTime,

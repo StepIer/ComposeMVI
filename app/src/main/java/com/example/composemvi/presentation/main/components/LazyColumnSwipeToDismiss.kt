@@ -22,6 +22,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.composemvi.presentation.model.Event
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -30,7 +33,8 @@ fun LazyColumnSwipeToDismiss(
     events: List<Event> = emptyList(),
     lazyListState: LazyListState = rememberLazyListState(),
     onDelete: (id: Int) -> Unit = {},
-    onClick: (id: Int) -> Unit = {},
+    onClickToEvent: (event: Event) -> Unit = {},
+    onClickToId: (id: Int) -> Unit = {},
     content: LazyListScope.() -> Unit = {},
 ) {
     LazyColumn(
@@ -89,18 +93,22 @@ fun LazyColumnSwipeToDismiss(
                         ).value,
                         modifier = Modifier
                             .fillMaxSize()
-//                            .fillMaxWidth()
-//                            .height(Dp(50f))
                             .align(alignment = Alignment.CenterVertically)
-//                            .padding(8.dp)
                     ) {
                         ListTile(
                             textId = item.id.toString(),
                             textEvent = item.event,
-                            textTime = item.time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                        ) {
-                            onClick(item.id!!)
-                        }
+                            textTime = LocalDateTime.ofInstant(
+                                Instant.ofEpochMilli(item.time),
+                                ZoneId.systemDefault()
+                            ).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                            onClickId = {
+                                onClickToId(item.id!!)
+                            },
+                            onClickEvent = {
+                                onClickToEvent(item)
+                            }
+                        )
                     }
                 }
             )

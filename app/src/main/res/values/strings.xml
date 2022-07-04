@@ -2,6 +2,8 @@
     <string name="app_name">ComposeMVI</string>
 
     <string name="main_screen">Main screen</string>
+    <string name="event_screen">Event screen</string>
+    <string name="event_id_screen">EventId screen</string>
     <string name="button_add_event">Add event</string>
 
     <string name="id">id</string>

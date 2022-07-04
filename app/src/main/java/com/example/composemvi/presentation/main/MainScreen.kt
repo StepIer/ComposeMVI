@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -21,8 +22,15 @@ import com.example.composemvi.presentation.main.components.ButtonTile
 import com.example.composemvi.presentation.main.components.LazyColumnSwipeToDismiss
 import com.example.composemvi.presentation.main.components.ListTile
 import com.example.composemvi.presentation.model.Event
+import com.example.composemvi.route.NavigationArguments
+import com.example.composemvi.route.NavigationRoute
+import com.example.composemvi.route.navigateString
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -36,6 +44,35 @@ fun MainScreen(
     val events: List<Event> = state.value.events.collectAsState(emptyList()).value
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(
+        key1 = null,
+        block = {
+            mainViewModel.eventsUi.receiveAsFlow().collect {
+                when (it) {
+                    is MainViewModel.EventUi.NavigateToEventIdScreen -> {
+                        navController.navigate(
+                            navigateString(
+                                NavigationRoute.ROUTE_EVENT_ID,
+                                Pair(NavigationArguments.ARGUMENT_EVENT_ID, it.id)
+                            )
+                        )
+                    }
+                    is MainViewModel.EventUi.NavigateToEventScreen -> {
+                        navController.navigate(
+                            navigateString(
+                                NavigationRoute.ROUTE_EVENT,
+                                Pair(
+                                    NavigationArguments.ARGUMENT_EVENT,
+                                    Json.encodeToString(it.event)
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    )
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -74,9 +111,12 @@ fun MainScreen(
                 onDelete = { id ->
                     mainViewModel.sendAction(MainViewModel.Action.DeleteEventById(id))
                 },
-                onClick = { id ->
-                    mainViewModel.sendAction(MainViewModel.Action.EventItemClicked(id = id))
-                }
+                onClickToId = { id ->
+                    mainViewModel.sendAction(MainViewModel.Action.IdItemClicked(id = id))
+                },
+                onClickToEvent = { event ->
+                    mainViewModel.sendAction(MainViewModel.Action.EventItemClicked(event = event))
+                },
             )
             ButtonTile(title = stringResource(id = R.string.button_add_event)) {
                 mainViewModel.sendAction(MainViewModel.Action.ButtonAddEventClicked)
