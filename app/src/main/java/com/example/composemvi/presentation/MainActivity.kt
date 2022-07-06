@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.composemvi.presentation.ui.theme.ComposeMVITheme
-import com.example.composemvi.route.Navigation
+import com.example.composemvi.route.AnimatedNavigation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +26,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Navigation()
+//                    Navigation()
+                    AnimatedNavigation()
                 }
             }
         }
