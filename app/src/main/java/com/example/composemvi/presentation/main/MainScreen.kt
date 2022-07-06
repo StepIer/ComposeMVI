@@ -32,7 +32,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
     navController: NavController
@@ -45,33 +44,9 @@ fun MainScreen(
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(
-        key1 = null,
-        block = {
-            mainViewModel.eventsUi.receiveAsFlow().collect {
-                when (it) {
-                    is MainViewModel.EventUi.NavigateToEventIdScreen -> {
-                        navController.navigate(
-                            navigateString(
-                                NavigationRoute.ROUTE_EVENT_ID,
-                                Pair(NavigationArguments.ARGUMENT_EVENT_ID, it.id)
-                            )
-                        )
-                    }
-                    is MainViewModel.EventUi.NavigateToEventScreen -> {
-                        navController.navigate(
-                            navigateString(
-                                NavigationRoute.ROUTE_EVENT,
-                                Pair(
-                                    NavigationArguments.ARGUMENT_EVENT,
-                                    Json.encodeToString(it.event)
-                                )
-                            )
-                        )
-                    }
-                }
-            }
-        }
+    CollectEventsUI(
+        viewModel = mainViewModel,
+        navController = navController
     )
 
     Scaffold(
@@ -131,4 +106,39 @@ fun MainScreen(
             }
         }
     }
+}
+
+@Composable
+fun CollectEventsUI(
+    viewModel: MainViewModel,
+    navController: NavController
+) {
+    LaunchedEffect(
+        key1 = null,
+        block = {
+            viewModel.eventsUi.receiveAsFlow().collect {
+                when (it) {
+                    is MainViewModel.EventUi.NavigateToEventIdScreen -> {
+                        navController.navigate(
+                            navigateString(
+                                NavigationRoute.ROUTE_EVENT_ID,
+                                Pair(NavigationArguments.ARGUMENT_EVENT_ID, it.id)
+                            )
+                        )
+                    }
+                    is MainViewModel.EventUi.NavigateToEventScreen -> {
+                        navController.navigate(
+                            navigateString(
+                                NavigationRoute.ROUTE_EVENT,
+                                Pair(
+                                    NavigationArguments.ARGUMENT_EVENT,
+                                    Json.encodeToString(it.event)
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    )
 }
