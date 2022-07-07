@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,12 +50,49 @@ fun MainScreen(
         navController = navController
     )
 
+    if (state.value.isOpenDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                mainViewModel.sendAction(MainViewModel.Action.CloseDialog)
+            },
+            title = {
+                Text(text = stringResource(id = R.string.dialog_title))
+            },
+            text = {
+                Text(text = stringResource(id = R.string.dialog_text))
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        mainViewModel.sendAction(MainViewModel.Action.ConfirmDialogButtonClicked)
+                    }) {
+                    Text(text = stringResource(id = R.string.confirm_button))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        mainViewModel.sendAction(MainViewModel.Action.DismissDialogButtonClicked)
+                    }) {
+                    Text(text = stringResource(id = R.string.dismiss_button))
+                }
+            }
+        )
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = {
                     Text(text = stringResource(id = R.string.main_screen))
+                },
+                actions = {
+                    Button(onClick = {
+                        mainViewModel.sendAction(MainViewModel.Action.OpenDialog)
+                    }) {
+                        Icon(Icons.Outlined.Add, contentDescription = "open dialog")
+                    }
                 }
             )
         },

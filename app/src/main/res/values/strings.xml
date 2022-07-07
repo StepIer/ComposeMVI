@@ -6,6 +6,11 @@
     <string name="event_id_screen">EventId screen</string>
     <string name="button_add_event">Add event</string>
 
+    <string name="dialog_title">Dialog title</string>
+    <string name="dialog_text">Dialog text</string>
+    <string name="confirm_button">Confirm Button</string>
+    <string name="dismiss_button">Dismiss Button</string>
+
     <string name="id">id</string>
     <string name="event">event</string>
     <string name="time">time</string>

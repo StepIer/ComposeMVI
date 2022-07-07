@@ -105,6 +105,46 @@ class MainViewModel @Inject constructor(
                         )
                         _eventsUi.trySend(EventUi.NavigateToEventIdScreen(action.id))
                     }
+                    Action.ConfirmDialogButtonClicked -> {
+                        insertEventUseCase.invoke(
+                            Event(
+                                event = "ConfirmDialogButtonClicked"
+                            ).toDomainModel()
+                        )
+                        _state.value = state.value.copy(
+                            isOpenDialog = false
+                        )
+                    }
+                    Action.DismissDialogButtonClicked -> {
+                        insertEventUseCase.invoke(
+                            Event(
+                                event = "DismissDialogButtonClicked"
+                            ).toDomainModel()
+                        )
+                        _state.value = state.value.copy(
+                            isOpenDialog = false
+                        )
+                    }
+                    Action.OpenDialog -> {
+                        insertEventUseCase.invoke(
+                            Event(
+                                event = "OpenDialog"
+                            ).toDomainModel()
+                        )
+                        _state.value = state.value.copy(
+                            isOpenDialog = true
+                        )
+                    }
+                    Action.CloseDialog -> {
+                        insertEventUseCase.invoke(
+                            Event(
+                                event = "CloseDialog"
+                            ).toDomainModel()
+                        )
+                        _state.value = state.value.copy(
+                            isOpenDialog = false
+                        )
+                    }
                 }
             }
         }
@@ -127,9 +167,14 @@ class MainViewModel @Inject constructor(
         object HeaderItemClicked : Action()
         data class EventItemClicked(val event: Event) : Action()
         data class IdItemClicked(val id: Int) : Action()
+        object OpenDialog : Action()
+        object CloseDialog : Action()
+        object ConfirmDialogButtonClicked : Action()
+        object DismissDialogButtonClicked : Action()
     }
 
     data class State(
-        val events: Flow<List<Event>> = flowOf()
+        val events: Flow<List<Event>> = flowOf(),
+        val isOpenDialog: Boolean = false
     )
 }
